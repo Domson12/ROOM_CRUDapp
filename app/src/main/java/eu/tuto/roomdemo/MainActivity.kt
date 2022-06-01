@@ -34,10 +34,15 @@ class MainActivity : AppCompatActivity() {
     private fun displaySubscribersList() {
         subscriberViewModel.getSaveSubscribers().observe(this) {
             Log.i("MyTag", it.toString())
-            binding.subscriberRecyclerview.adapter = MyRecyclerViewAdapter(it,{selectedItem:Subscriber->listItemClicked(selectedItem)})
+            binding.subscriberRecyclerview.adapter = MyRecyclerViewAdapter(it) { selectedItem: Subscriber ->
+                listItemClicked(
+                    selectedItem
+                )
+            }
         }
     }
     private fun listItemClicked(subscriber: Subscriber){
         Toast.makeText(this, "selected name is ${subscriber.name}", Toast.LENGTH_SHORT).show()
+        subscriberViewModel.initUpdateAndDelete(subscriber)
     }
 }
