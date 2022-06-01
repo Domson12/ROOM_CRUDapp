@@ -5,3 +5,5 @@ a basic app with room database and CRUD functionality
 - Coroutines
 - data binding
 - MVVM
+- LiveData
+# I'll provide a GIF and some photos of the app later 
