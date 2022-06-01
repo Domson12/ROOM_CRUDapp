@@ -20,6 +20,11 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
 
     val clearAllOrDeleteButtonText = MutableLiveData<String>()
 
+    private val statusMessage = MutableLiveData<Event<String>>()
+
+    val message: LiveData<Event<String>>
+        get() = statusMessage
+
     init {
         saveOrUpdateButtonText.value = "Save"
         clearAllOrDeleteButtonText.value = "Clear all"
@@ -49,6 +54,7 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
 
     fun insert(subscriber: Subscriber) = viewModelScope.launch {
         repository.insert(subscriber)
+        statusMessage.value = Event("Subscriber inserted successfully")
     }
 
     fun update(subscriber: Subscriber) = viewModelScope.launch {
@@ -58,6 +64,7 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
         isUpdateOrDelete = false
         saveOrUpdateButtonText.value = "Save"
         clearAllOrDeleteButtonText.value = "Clear All"
+        statusMessage.value = Event("Subscriber updated successfully")
     }
 
     fun delete(subscriber: Subscriber) = viewModelScope.launch {
@@ -67,10 +74,12 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
         isUpdateOrDelete = false
         saveOrUpdateButtonText.value = "Save"
         clearAllOrDeleteButtonText.value = "Clear All"
+        statusMessage.value = Event("Subscriber deleted successfully")
     }
 
     fun clearAll() = viewModelScope.launch {
         repository.deleteAll()
+        statusMessage.value = Event("All subscribers deleted successfully")
     }
 
     fun initUpdateAndDelete(subscriber: Subscriber) {
