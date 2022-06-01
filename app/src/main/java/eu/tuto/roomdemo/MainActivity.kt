@@ -15,6 +15,7 @@ import eu.tuto.roomdemo.db.SubscriberRepository
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var subscriberViewModel: SubscriberViewModel
+    private lateinit var adapter: MyRecyclerViewAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -24,31 +25,36 @@ class MainActivity : AppCompatActivity() {
         subscriberViewModel = ViewModelProvider(this, factory)[SubscriberViewModel::class.java]
         binding.myViewModel = subscriberViewModel
         binding.lifecycleOwner = this
-       initRecyclerView()
+        initRecyclerView()
 
         subscriberViewModel.message.observe(this) { it ->
-            it.getContentIfNotHandled()?.let { 
+            it.getContentIfNotHandled()?.let {
                 Toast.makeText(this, it, Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    private fun initRecyclerView(){
+    private fun initRecyclerView() {
         binding.subscriberRecyclerview.layoutManager = LinearLayoutManager(this)
+        adapter = MyRecyclerViewAdapter { selectedItem: Subscriber ->
+            listItemClicked(selectedItem)
+        }
+        binding.subscriberRecyclerview.adapter = adapter
         displaySubscribersList()
     }
+
     private fun displaySubscribersList() {
         subscriberViewModel.getSaveSubscribers().observe(this) {
             Log.i("MyTag", it.toString())
-            binding.subscriberRecyclerview.adapter = MyRecyclerViewAdapter(it) { selectedItem: Subscriber ->
-                listItemClicked(
-                    selectedItem
-                )
-            }
+            adapter.setList(it)
+            adapter.notifyDataSetChanged()
         }
     }
-    private fun listItemClicked(subscriber: Subscriber){
+
+    private fun listItemClicked(subscriber: Subscriber) {
         Toast.makeText(this, "selected name is ${subscriber.name}", Toast.LENGTH_SHORT).show()
         subscriberViewModel.initUpdateAndDelete(subscriber)
     }
 }
+
+
